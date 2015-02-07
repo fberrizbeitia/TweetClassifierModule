@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Untitled Document</title>
+</head>
+<body>
+<?php 
+require_once("scripts/conexion.php");
+require_once("classes/termino.php");
+?>
+<div id="cabeza">
+
+</div>
+
+<div id="cuerpo">
+	<div id="caja-contenido">
+        <form action="scripts/importarTuits_2.php" method="get" >
+        <div id="titulo">
+        	Ingrese el témino para recobrar los últimos 1000 tuits
+        </div>
+        <div id="contenido">
+        	<input name="query" type="text" />
+            <input name="" type="submit" value="Submit" />
+        </div>
+        </form>
+        <div>
+        	<ul>
+        	<?php
+            $termino = new Termino();
+			$termino->obtenerTodos();
+			for($i = 0; $i < $termino->total; $i++){
+				$termino->ir($i);
+			?>
+            	<li><?php echo($termino->texto.": ".$termino->obtenerTotalTuits())?> </li>
+            <?php
+			}
+			?>
+            </ul>
+        </div>
+  </div>
+
+</div>
+
+<div id="pie">
+</div>
+</body>
+</html>
