@@ -142,11 +142,11 @@ class dictionary{
 
 		}//for($i = 0; $i < mysql_num_rows($result); $i++)t{
 		 
-		 echo("Tuits Cubiertos: ".$coveredTweets."<br>");
-		 echo("Tuits Bien Cubiertos: ".$wellCoveredTweets."<br>");
-		 echo("Palabras Cubiertas: ".$wordsCovered."<br>");
-		 echo("Total de palabras: ".$totalWords."<br>");
-		 echo("Promedio de cobertura por tuit: ".$wordsCovered/$totalWords."<br>");
+		 echo("Covered Tweets: ".$coveredTweets."<br>");
+		 echo("Well Covered Tweets: ".$wellCoveredTweets."<br>");
+		 echo("Covered Words: ".$wordsCovered."<br>");
+		 echo("Total Words: ".$totalWords."<br>");
+		 echo("Average Coverture: ".$wordsCovered/$totalWords."<br>");
 				 		
 		 return $coveredTweets;
 	}
@@ -215,25 +215,25 @@ class dictionary{
 			
 			//1 hashtags, 2 mentions , 3 links, 4 media
 			$hastags = count(explode(",",$row[3]));
-			if($hastags > 0){
+			if($hastags > 1){
 				$sql="INSERT INTO bow (idTuit, idWord) VALUES ($idTuit,1)";
 				mysql_query($sql) or die("dictionary->parseSample_4: error en consulta".mysql_error()."SQL: ".$sql);
 			}
 			
 			$mentions = count(explode(",",$row[2]));
-			if($mentions > 0){
+			if($mentions > 1){
 				$sql="INSERT INTO bow (idTuit, idWord) VALUES ($idTuit,2)";
 				mysql_query($sql) or die("dictionary->parseSample_5: error en consulta".mysql_error()."SQL: ".$sql);
 			}
 			
 			$links= count(explode(",",$row[4]));
-			if($links > 0){
+			if($links > 1){
 				$sql="INSERT INTO bow (idTuit, idWord) VALUES ($idTuit,3)";
 				mysql_query($sql) or die("dictionary->parseSample_6: error en consulta".mysql_error()."SQL: ".$sql);
 			}
 			
 			$media = count(explode(",",$row[5]));
-			if($media > 0){
+			if($media > 1){
 				$sql="INSERT INTO bow (idTuit, idWord) VALUES ($idTuit,4)";
 				mysql_query($sql) or die("dictionary->parseSample_7: error en consulta".mysql_error()."SQL: ".$sql);
 			}
@@ -246,10 +246,16 @@ class dictionary{
 					mysql_query($sql) or die("dictionary->parseSample_7: error en consulta".mysql_error()."SQL: ".$sql);
 				}
 			}
-			
-			
-			
+
 		}
+	
+	}
+	
+	function getDictionarySize(){
+		$sql = "SELECT count(idWord) AS total FROM dictionary";
+		$result = mysql_query($sql) or die("dictionary->getDictionarySize: error en consulta".mysql_error()."SQL: ".$sql);
+		return mysql_result($result,0,"total");
+		
 	
 	}
 	

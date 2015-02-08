@@ -11,6 +11,7 @@ class TweetSample extends dbObjeto{
 	var $clase;
 	var $clase2;
 	var $clase_def;
+	var $trainingSet;
 
 	public function actualizar(){
 		if ($this->total > 0){
@@ -19,6 +20,7 @@ class TweetSample extends dbObjeto{
 				$this->clase = mysql_result($this->lista,$this->indice,"class");
 				$this->clase2 = mysql_result($this->lista,$this->indice,"class2");
 				$this->clase_def = mysql_result($this->lista,$this->indice,"class_def");
+				$this->trainingSet = mysql_result($this->lista,$this->indice,"trainingSet");
 			}
 		}
 	
@@ -66,6 +68,17 @@ class TweetSample extends dbObjeto{
 			$this->indice = 0;
 			$this->actualizar();
 		}
+	
+	
+	public function obtenerTrainingSet(){
+			$sql = "SELECT * FROM sample where trainingSet = 1";
+			$result = mysql_query($sql) or die("tuit->obtenerTrainingSet: error en consulta".mysql_error()."SQL: ".$sql);
+			$this->lista = $result;
+			$this->total = mysql_num_rows($result);
+			$this->indice = 0;
+			$this->actualizar();
+		}
+	
 	
 	public function guardar(){
 		

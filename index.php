@@ -20,7 +20,6 @@
         <li id="tag">Tag</li>
         <li id="denoise">Denoise</li>
         <li id="dictionary">Create Dictionary</li>
-        <li id="generate-training-set">Generate Training Set</li>
         <li id="train">Train</li>
         <li id="test">Test</li>
     </ul>

@@ -2,6 +2,8 @@
 require_once("scripts/conexion.php");
 require_once("classes/tuit.php");
 require_once("classes/TweetSample.php");
+require_once("classes/dictionary.php");
+
 
 $objTuit = new Tuit();
 $objTuit->obtenerTodos();
@@ -16,6 +18,12 @@ $taggedTweets = $sampleSize - $objSample->total;
 
 $objSample->obtenerSinDenoise();
 $denoised = $sampleSize - $objSample->total;
+
+$objDictionary = new dictionary(0);
+$dictionarySize = $objDictionary->getDictionarySize();
+
+$objSample->obtenerTrainingSet();
+$trainingSetSize = $objSample->total;
 
 ?>
 <div>
@@ -38,16 +46,13 @@ $denoised = $sampleSize - $objSample->total;
     </tr>
 	  <tr>
 	    <td align="left">Dictionary size</td>
-	    <td align="left">&nbsp;</td>
+	    <td align="left"><?php echo($dictionarySize)?></td>
     </tr>
 	  <tr>
-	    <td align="left">Training set created</td>
-	    <td align="left">&nbsp;</td>
+	    <td align="left">Training set size</td>
+	    <td align="left"><?php echo($trainingSetSize)?></td>
     </tr>
-	  <tr>
-	    <td align="left">Trained Algorith</td>
-	    <td align="left">&nbsp;</td>
-    </tr>
+	 
 	  <tr>
 	    <td align="left">Test Result (Presition)</td>
 	    <td align="left">&nbsp;</td>

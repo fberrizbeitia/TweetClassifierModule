@@ -23,6 +23,14 @@ $(document).ready(function(){
 	$("#denoise" ).click(function() {
     	$("#cuerpo").load("denoise.php")
 	});
+	
+	$("#dictionary" ).click(function() {
+    	$("#cuerpo").load("dictionary.php")
+	});
+	
+	$("#train" ).click(function() {
+    	$("#cuerpo").load("train.php")
+	});
 
 
 });
