@@ -160,11 +160,13 @@ class dictionary{
 		//-- add the fixed fields (hastags,mentions,links,media)
 		$sql = "INSERT INTO dictionary (word) VALUES ('hashtags'),('mentions'),('links'),('media')";
 		mysql_query($sql) or die("dictionary->saveToDB_1: error en consulta".mysql_error()."SQL: ".$sql);
-		
+		$sql = "INSERT INTO dictionary (word) VALUES ";
 		for($i = 0;$i < count($this->bow); $i++){					
-			$sql = "INSERT INTO dictionary (word) VALUES ('".$this->bow[$i]."')";	
-			mysql_query($sql) or die("dictionary->saveToDB_3: error en consulta".mysql_error()."SQL: ".$sql);
+			$sql .= "('".$this->bow[$i]."'),";	
 		}
+		
+		$sql = rtrim($sql,",");
+		mysql_query($sql) or die("dictionary->saveToDB_3: error en consulta".mysql_error()."SQL: ".$sql);
 		
 	}
 	
@@ -176,7 +178,7 @@ class dictionary{
 		
 		while(!$stop){
 			if(count($this->bow ) > 0){
-				if(strcasecmp($word,$this->bow[$cont]) == 0){
+				if(strcasecmp($word,$this->bow[$cont]) === 0){
 					$stop = true;
 				}
 			}			
@@ -208,6 +210,8 @@ class dictionary{
 		$sql = "TRUNCATE bow";
 		mysql_query($sql) or die("dictionary->parseSample_3: error en consulta".mysql_error()."SQL: ".$sql);
 		
+		//$csv = fopen("bow.csv","w");
+		$sql = "INSERT INTO bow VALUES ";
 		while ($row = mysql_fetch_array($sample, MYSQL_NUM)) {
 			//Iterate among all the tuits in the sample
 			$stemmed = explode(" ",$row[0]);
@@ -216,38 +220,54 @@ class dictionary{
 			//1 hashtags, 2 mentions , 3 links, 4 media
 			$hastags = count(explode(",",$row[3]));
 			if($hastags > 1){
-				$sql="INSERT INTO bow (idTuit, idWord) VALUES ($idTuit,1)";
-				mysql_query($sql) or die("dictionary->parseSample_4: error en consulta".mysql_error()."SQL: ".$sql);
+			//	$sql="INSERT INTO bow (idTuit, idWord) VALUES ($idTuit,1)";
+			//	mysql_query($sql) or die("dictionary->parseSample_4: error en consulta".mysql_error()."SQL: ".$sql);
+				//fputcsv($csv,array($idTuit,1));
+				$sql .= "($idTuit,1),";
 			}
 			
 			$mentions = count(explode(",",$row[2]));
 			if($mentions > 1){
-				$sql="INSERT INTO bow (idTuit, idWord) VALUES ($idTuit,2)";
-				mysql_query($sql) or die("dictionary->parseSample_5: error en consulta".mysql_error()."SQL: ".$sql);
+			//	$sql="INSERT INTO bow (idTuit, idWord) VALUES ($idTuit,2)";
+			//	mysql_query($sql) or die("dictionary->parseSample_5: error en consulta".mysql_error()."SQL: ".$sql);
+				//fputcsv($csv,array($idTuit,2));
+				$sql .= "($idTuit,2),";			
 			}
 			
 			$links= count(explode(",",$row[4]));
 			if($links > 1){
-				$sql="INSERT INTO bow (idTuit, idWord) VALUES ($idTuit,3)";
-				mysql_query($sql) or die("dictionary->parseSample_6: error en consulta".mysql_error()."SQL: ".$sql);
+			//	$sql="INSERT INTO bow (idTuit, idWord) VALUES ($idTuit,3)";
+			//	mysql_query($sql) or die("dictionary->parseSample_6: error en consulta".mysql_error()."SQL: ".$sql);
+				//fputcsv($csv,array($idTuit,3));
+				$sql .= "($idTuit,3),";
 			}
 			
 			$media = count(explode(",",$row[5]));
 			if($media > 1){
-				$sql="INSERT INTO bow (idTuit, idWord) VALUES ($idTuit,4)";
-				mysql_query($sql) or die("dictionary->parseSample_7: error en consulta".mysql_error()."SQL: ".$sql);
+				//$sql="INSERT INTO bow (idTuit, idWord) VALUES ($idTuit,4)";
+				//mysql_query($sql) or die("dictionary->parseSample_7: error en consulta".mysql_error()."SQL: ".$sql);
+				//fputcsv($csv,array($idTuit,4));
+				$sql .= "($idTuit,4),";
 			}
+			
+			
 			
 			for ($i = 0; $i < count($stemmed); $i++){
 				$position = $this->dictionaryPos($stemmed[$i]);
 				if($position > 0){
-					$idWord = $position + 1;
-					$sql="INSERT INTO bow (idTuit, idWord) VALUES ($idTuit,$idWord)";
-					mysql_query($sql) or die("dictionary->parseSample_7: error en consulta".mysql_error()."SQL: ".$sql);
+					$idWord = $position;
+					//$sql="INSERT INTO bow (idTuit, idWord) VALUES ($idTuit,$idWord)";
+					//mysql_query($sql) or die("dictionary->parseSample_7: error en consulta".mysql_error()."SQL: ".$sql);			
+					//fputcsv($csv,array($idTuit,$idWord));
+					$sql .= "($idTuit,$idWord),";
+					
 				}
-			}
-
-		}
+			}//for ($i = 0; $i < count($stemmed); $i++){
+		} //while ($row = mysql_fetch_array($sample, MYSQL_NUM)) {
+	
+	//fclose($csv);
+	$sql = rtrim($sql,",");
+	 mysql_query($sql) or die("dictionary->parseSample_3: error en consulta".mysql_error()."SQL: ".$sql);
 	
 	}
 	

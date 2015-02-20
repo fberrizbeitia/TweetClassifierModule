@@ -79,6 +79,15 @@ class TweetSample extends dbObjeto{
 			$this->actualizar();
 		}
 	
+	public function obtenerTestSet(){
+			$sql = "SELECT * FROM sample where trainingSet = 0";
+			$result = mysql_query($sql) or die("tuit->obtenerTestSet: error en consulta".mysql_error()."SQL: ".$sql);
+			$this->lista = $result;
+			$this->total = mysql_num_rows($result);
+			$this->indice = 0;
+			$this->actualizar();
+		}
+	
 	
 	public function guardar(){
 		
@@ -121,6 +130,15 @@ class TweetSample extends dbObjeto{
 			$steemed .= PorterStemmer::Stem($token[$i])." ";
 		}
 		return $steemed;
+	}
+	
+	public function denoiseTweet($texto){
+		$jSS = new jSearchString();
+		$noMentions = $this->removeMentions($texto);
+		$noStopWords = $jSS->parseString( strtolower($noMentions));
+		$stemmed = $this->stemmer($noStopWords);
+		
+		return $stemmed;
 	}
 	
 	public function cleanAndSaveTweets(){

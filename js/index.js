@@ -31,6 +31,10 @@ $(document).ready(function(){
 	$("#train" ).click(function() {
     	$("#cuerpo").load("train.php")
 	});
+	
+	$("#test" ).click(function() {
+    	$("#cuerpo").load("test.php")
+	});
 
 
 });

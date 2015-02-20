@@ -5,6 +5,9 @@ Implementation of the Naïve Bayes Classifier
 
 class Classifier {
 	
+	var $totalDocumentary;
+	var $totalNonDocumentary;
+		
 	function generateTrainingSet($size){
 	/*
 	Description: Takes a SRS of size $size form sample and tag those as parte of the traing Set
@@ -41,6 +44,59 @@ class Classifier {
 			$count = $row[1]; 
 			$sql = "UPDATE dictionary SET n_doc = $count WHERE idWord = $idWord";
 			mysql_query($sql) or die("Classifier->train_4: error en consulta".mysql_error()."SQL: ".$sql);
+		}
+	
+	}
+	
+	function setTotals(){
+		$sql = "SELECT COUNT( idTuit ) AS total FROM  `sample` WHERE class = 0 AND trainingSet =1";
+		$result = mysql_query($sql) or die("Classifier->setTotals: error en consulta".mysql_error()."SQL: ".$sql);
+		$this->totalNonDocumentary = mysql_result($result,0,"total");
+		
+		$sql = "SELECT COUNT( idTuit ) AS total FROM  `sample` WHERE class = 1 AND trainingSet =1";
+		$result = mysql_query($sql) or die("Classifier->setTotals: error en consulta".mysql_error()."SQL: ".$sql);
+		$this->totalDocumentary = mysql_result($result,0,"total");
+		
+		
+	}
+	
+	function classify($text){
+		/*
+		Description: Classify the given text as documentary or non documentary
+		INPUT: a stemmed text
+		OUTPUT: 1 if the text is docuemntary, 0 otherwise
+		*/
+		
+		
+		$probDoc = $this->totalDocumentary/($this->totalDocumentary + $this->totalNonDocumentary) ;
+		$probNonDoc = $this->totalNonDocumentary/($this->totalDocumentary + $this->totalNonDocumentary) ;
+		
+		
+		$words = explode(" ",$text);
+		
+		for($i = 0; $i < count($words); $i++){
+			$sql = "SELECT n_doc, n_nondoc FROM dictionary WHERE word = '".$words[$i]."' ";
+			$result = mysql_query($sql) or die("Classifier->classify_1: error en consulta".mysql_error()."SQL: ".$sql);
+			
+			if(mysql_num_rows($result) > 0){
+				 
+				$probNonDoc *= (mysql_result($result,0,"n_nondoc")+1)/($this->totalNonDocumentary +1);
+				$probDoc *= (mysql_result($result,0,"n_doc")+1)/($this->totalDocumentary +1);
+				
+				
+			}
+		}
+		
+		
+		$resta = $probDoc - $probNonDoc;
+		//echo("$resta | ");
+		
+		$threshold = 0;
+		
+		if( ($probDoc - $probNonDoc) > $threshold){
+			return 1;
+		}else{
+			return 0;	
 		}
 	
 	}
